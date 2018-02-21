@@ -44,7 +44,7 @@ function startGame() {
         
 }
 // 2. create timer that will count down from 30
-var counter = 10;
+var counter = 11;
 
 function timer() {
     intervalIndentity = setInterval(function() {
@@ -54,7 +54,7 @@ function timer() {
         if (counter === 0) {
             console.log("derrrrrp");
             clearInterval(intervalIndentity);
-            counter = 10;
+            counter = 11;
         }
     }, 1000);
 }
@@ -86,7 +86,7 @@ function qAs() {
 }
 
 function checkAnswer(userC, correctAnswer) {
-    if (counter == 0) {
+    if (counter <= 0) {
     	alert("you ran out of time dummy!");
     	i++;
     	unansweredQuestions++;
@@ -97,14 +97,18 @@ function checkAnswer(userC, correctAnswer) {
         alert("ding dong");
         i++;
         incorrectAnswers++;
-        console.log("incorrect answers" + incorrectAnswers);
+        console.log("incorrect answers: " + incorrectAnswers);
+        clearInterval(intervalIndentity);
+        counter = 11;
     } 
 
     else if (userC === correctAnswer) {
         alert("nailed it");
         i++;
         correctAnswers++;
-        console.log("correct answers" + correctAnswers);
+        console.log("correct answers: " + correctAnswers);
+        clearInterval(intervalIndentity);
+        counter = 11;
     }
 
     qAs();

@@ -1,4 +1,4 @@
-//1. variables: questions[will these be objects?], timer, correctAnswers, incorrectAnswers, unanswered
+//object holding all the questions for quiz
 var questions = [{
         question: "When hippos are upset, what color does their sweat turn?",
         answers: ["Blue", "Green", "Red", "Yellow"],
@@ -17,17 +17,48 @@ var questions = [{
         answers: ["Fun", "Friday the 13th", "Parasailing", "Carving a Turkey"],
         correctAnswer: "Friday the 13th"
     }
+//     }, {
+//     	question: "",
+//     	answers: [],
+//     	correctAnswer: ""
+//     },{
+//     	question: "",
+//     	answers: [],
+//     	correctAnswer: ""
+//     },{
+//     	question: "",
+//     	answers: [],
+//     	correctAnswer: ""
+//     },{
+//     	question: "",
+//     	answers: [],
+//     	correctAnswer: ""
+//     },{
+//     	question: "",
+//     	answers: [],
+//     	correctAnswer: ""
+//     },{
+//     	question: "",
+//     	answers: [],
+//     	correctAnswer: ""
+//     },
 
 ]
 
+// var i represents the index of the questions in the object
+
 var i = 0;
 var intervalIndentity;
-
 var correctAnswers = 0;
 var incorrectAnswers = 0;
 var unansweredQuestions = 0;
+var counter = 11;
+
+// creates on click events for all the answer buttons. Button user chooses is stored to userChoice, the correct answer is stored to correct. 
+//checkAnswer function is called and compares the user choice with the correct answer
 
 $("body").on('click', '.answer', function() {
+    
     console.log($(this).attr("options"));
     console.log($(this).attr("correct"));
 
@@ -37,64 +68,80 @@ $("body").on('click', '.answer', function() {
     checkAnswer(userChoice, correct)
 });
 
+//this function starts the game. emptys the html div that holds the game and calls the questions/answers function
 
 function startGame() {
+    
     $("#youReady").empty();
-    qAs()
+    qAs();
         
-}
-// 2. create timer that will count down from 30
-var counter = 11;
+};
+
+// timer for game counts down in 1 second intervals from 10. timer is added to html so user can see. if timer hits 0, time stops and 1 point is added to unansweredQuestions. 
+// You will see the correct answer and quiz will automatically move on to next question
 
 function timer() {
-    intervalIndentity = setInterval(function() {
-        console.log(counter);
-        counter--
-        $("#timer").html(counter);
-        if (counter === 0) {
-            console.log("derrrrrp");
-            clearInterval(intervalIndentity);
-            counter = 11;
-        }
-    }, 1000);
-}
+	
+	intervalIndentity = setInterval(function(){
+		console.log(counter);
+		counter--;
+		
+		$("#timer").html(counter);
+		
+		if (counter === 0) {
+			clearInterval(intervalIndentity);
+			unansweredQuestions++;
+
+			$("#answers").html("You ran out of time! the correct answer is " + questions[i].correctAnswer);
+		
+		moveToNextQuestion();
+		clearInterval(intervalIndentity);
+		
+		}
+	
+	}, 1000);
+};
 
 
-//3. for loop that will display a question and the corresponding answers
+//function loops through questions object and displays question to html.
+// var a creates buttons and adds classes/attrs to buttons, appends answers to those buttons
+
 function qAs() {
+    
     $("#youReady").empty();
     $("#answers").empty();
+    $("#question").empty();
     timer();
     $("#question").html(questions[i].question);
 
     for (var j = 0; j < questions.length; j++) {
 
-
-        var a = $("<button>");
+		var a = $("<button>");
         a.addClass("answer");
         a.attr("options", questions[i].answers[j]);
         a.attr("correct", questions[i].correctAnswer);
         a.text(questions[i].answers[j]);
         $("#answers").append(a);
 
+	}
 
-    }
     console.log(questions[i].question);
     console.log(questions[i].answers);
     console.log(questions[i].correctAnswer);
 
-}
+};
+
+//function checks users choice with the correct answer.
 
 function checkAnswer(userC, correctAnswer) {
-    if (counter <= 0) {
-    	alert("you ran out of time dummy!");
-    	i++;
-    	unansweredQuestions++;
-    	console.log(unansweredQuestions);
-    }
 
-    else if (userC !== correctAnswer) {
-        alert("ding dong");
+    // if (i === questions.length - 1) {
+    // 	setTimeout(gameEnd, 5000);
+    // 	clearInterval(intervalIndentity);
+    // }
+
+    if (userC !== correctAnswer) {
+        alert("ding dong! the correct answer is: " + questions[i].correctAnswer);
         i++;
         incorrectAnswers++;
         console.log("incorrect answers: " + incorrectAnswers);
@@ -111,15 +158,36 @@ function checkAnswer(userC, correctAnswer) {
         counter = 11;
     }
 
+
+
     qAs();
-}
+};
 
+//function automatically moves user to next question if they run out of time. if its the last question move to end game screen,
+//if not, continue questions
 
+function moveToNextQuestion() {
 
-//4.2 IF user runs out of time, display INCORRECT, log info into unanswered, move on to next question
+        if (i === questions.length - 1) {
+            setTimeout(gameEnd, 5000);
+            clearInterval(intervalIndentity);
+            $("#youReady").empty();
+           
+        } else {
+            i++;
+            setTimeout(startGame, 5000);
+            clearInterval(intervalIndentity);
+            counter = 11;
 
+        }
+    };
 
-//4.1 ELSE IF user clicks incorrect answer, display INCORRECT, log info into incorrectAnswers, move on to next question
-//4. ELSE user clicks correct answer, display CORRECT, log info into correctAnswers, move on to next question
-//5. When player goes through all the questions, display their score (correct, incorrect and unanswered)
-//5.1 Player can click a button that will restart the quiz, reset their score to 0
+//function for end of game. will display your score, answers to questions and reset button
+
+    function gameEnd () {
+    	$("#youReady").empty();
+    	$("#question").empty();
+    	$("#answers").empty();
+    	$("#timer").empty();
+    	$("#finalScore").html("Here's how you did!" + "Correct answers: " + correctAnswers + "Incorrect answers: " + incorrectAnswers + "Unanswered questions: " + unansweredQuestions + questions[0].question + questions[0].correctAnswer);
+};

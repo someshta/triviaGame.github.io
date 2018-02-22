@@ -52,8 +52,8 @@ var intervalIndentity;
 var correctAnswers = 0;
 var incorrectAnswers = 0;
 var unansweredQuestions = 0;
-var counter = 11;
-
+var counter = 3;
+var resetButton;
 // creates on click events for all the answer buttons. Button user chooses is stored to userChoice, the correct answer is stored to correct. 
 //checkAnswer function is called and compares the user choice with the correct answer
 
@@ -68,6 +68,9 @@ $("body").on('click', '.answer', function() {
     checkAnswer(userChoice, correct)
 });
 
+// $("body").on('click', '.restartGame', function() {
+// 	restartGame();
+// });
 //this function starts the game. emptys the html div that holds the game and calls the questions/answers function
 
 function startGame() {
@@ -125,6 +128,7 @@ function qAs() {
 
 	}
 
+
     console.log(questions[i].question);
     console.log(questions[i].answers);
     console.log(questions[i].correctAnswer);
@@ -146,7 +150,7 @@ function checkAnswer(userC, correctAnswer) {
         incorrectAnswers++;
         console.log("incorrect answers: " + incorrectAnswers);
         clearInterval(intervalIndentity);
-        counter = 11;
+        counter = 3;
     } 
 
     else if (userC === correctAnswer) {
@@ -155,7 +159,7 @@ function checkAnswer(userC, correctAnswer) {
         correctAnswers++;
         console.log("correct answers: " + correctAnswers);
         clearInterval(intervalIndentity);
-        counter = 11;
+        counter = 3;
     }
 
 
@@ -169,15 +173,15 @@ function checkAnswer(userC, correctAnswer) {
 function moveToNextQuestion() {
 
         if (i === questions.length - 1) {
-            setTimeout(gameEnd, 5000);
+            setTimeout(gameEnd, 2000);
             clearInterval(intervalIndentity);
             $("#youReady").empty();
            
         } else {
             i++;
-            setTimeout(startGame, 5000);
+            setTimeout(startGame, 2000);
             clearInterval(intervalIndentity);
-            counter = 11;
+            counter = 3;
 
         }
     };
@@ -189,5 +193,26 @@ function moveToNextQuestion() {
     	$("#question").empty();
     	$("#answers").empty();
     	$("#timer").empty();
-    	$("#finalScore").html("Here's how you did!" + "Correct answers: " + correctAnswers + "Incorrect answers: " + incorrectAnswers + "Unanswered questions: " + unansweredQuestions + questions[0].question + questions[0].correctAnswer);
+    	$("#finalScore").html("Here's how you did!" + "Correct answers: " + correctAnswers + "Incorrect answers: " + incorrectAnswers + "Unanswered questions: " + unansweredQuestions);
+
+    		restartGame();
+};
+
+//this function restarts quiz, sets all scores to zero
+
+function restartGame() {
+		restartButton = $("<button>");
+		restartButton.addClass("restart");
+		restartButton.text("Restart Game");
+		$("#finalScore").append(restartButton);
+	
+	$("body").on('click', '.restartGame', function() {
+
+
+	i = 0;
+	unansweredQuestions = 0;
+	correctAnswers = 0;
+	incorrectAnswers = 0;
+		startGame();
+	})
 };

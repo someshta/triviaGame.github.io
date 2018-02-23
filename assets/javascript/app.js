@@ -17,31 +17,31 @@ var questions = [{
         answers: ["Fun", "Friday the 13th", "Parasailing", "Carving a Turkey"],
         correctAnswer: "Friday the 13th"
     }
-//     }, {
-//     	question: "",
-//     	answers: [],
-//     	correctAnswer: ""
-//     },{
-//     	question: "",
-//     	answers: [],
-//     	correctAnswer: ""
-//     },{
-//     	question: "",
-//     	answers: [],
-//     	correctAnswer: ""
-//     },{
-//     	question: "",
-//     	answers: [],
-//     	correctAnswer: ""
-//     },{
-//     	question: "",
-//     	answers: [],
-//     	correctAnswer: ""
-//     },{
-//     	question: "",
-//     	answers: [],
-//     	correctAnswer: ""
-//     },
+    //     }, {
+    //     	question: "",
+    //     	answers: [],
+    //     	correctAnswer: ""
+    //     },{
+    //     	question: "",
+    //     	answers: [],
+    //     	correctAnswer: ""
+    //     },{
+    //     	question: "",
+    //     	answers: [],
+    //     	correctAnswer: ""
+    //     },{
+    //     	question: "",
+    //     	answers: [],
+    //     	correctAnswer: ""
+    //     },{
+    //     	question: "",
+    //     	answers: [],
+    //     	correctAnswer: ""
+    //     },{
+    //     	question: "",
+    //     	answers: [],
+    //     	correctAnswer: ""
+    //     },
 
 ]
 
@@ -49,6 +49,7 @@ var questions = [{
 
 var i = 0;
 var intervalIndentity;
+var timeoutId;
 var correctAnswers = 0;
 var incorrectAnswers = 0;
 var unansweredQuestions = 0;
@@ -58,7 +59,7 @@ var resetButton;
 //checkAnswer function is called and compares the user choice with the correct answer
 
 $("body").on('click', '.answer', function() {
-    
+
     console.log($(this).attr("options"));
     console.log($(this).attr("correct"));
 
@@ -74,35 +75,36 @@ $("body").on('click', '.answer', function() {
 //this function starts the game. emptys the html div that holds the game and calls the questions/answers function
 
 function startGame() {
-    
+
     $("#youReady").empty();
     qAs();
-        
+
 };
 
 // timer for game counts down in 1 second intervals from 10. timer is added to html so user can see. if timer hits 0, time stops and 1 point is added to unansweredQuestions. 
 // You will see the correct answer and quiz will automatically move on to next question
 
 function timer() {
-	
-	intervalIndentity = setInterval(function(){
-		console.log(counter);
-		counter--;
-		
-		$("#timer").html(counter);
-		
-		if (counter === 0) {
-			clearInterval(intervalIndentity);
-			unansweredQuestions++;
 
-			$("#answers").html("You ran out of time! the correct answer is " + questions[i].correctAnswer);
-		
-		moveToNextQuestion();
-		clearInterval(intervalIndentity);
-		
-		}
-	
-	}, 1000);
+    intervalIndentity = setInterval(function() {
+        console.log(counter);
+        counter--;
+
+        $("#timer").html(counter);
+
+        if (counter === 0) {
+            clearInterval(intervalIndentity);
+            unansweredQuestions++;
+
+            if (i < questions.length) {
+                $("#answers").html("You ran out of time! the correct answer is " + questions[i].correctAnswer);
+            }
+            moveToNextQuestion();
+            clearInterval(intervalIndentity);
+
+        }
+
+    }, 1000);
 };
 
 
@@ -110,52 +112,70 @@ function timer() {
 // var a creates buttons and adds classes/attrs to buttons, appends answers to those buttons
 
 function qAs() {
-    
+
     $("#youReady").empty();
     $("#answers").empty();
     $("#question").empty();
     timer();
-    $("#question").html(questions[i].question);
 
-    for (var j = 0; j < questions.length; j++) {
+    if (i < questions.length) {
+        $("#question").html(questions[i].question);
 
-		var a = $("<button>");
-        a.addClass("answer");
-        a.attr("options", questions[i].answers[j]);
-        a.attr("correct", questions[i].correctAnswer);
-        a.text(questions[i].answers[j]);
-        $("#answers").append(a);
+        for (var j = 0; j < questions.length; j++) {
 
-	}
+            var a = $("<button>");
+            a.addClass("answer");
+            a.attr("options", questions[i].answers[j]);
+            a.attr("correct", questions[i].correctAnswer);
+            a.text(questions[i].answers[j]);
+            $("#answers").append(a);
+
+        }
 
 
-    console.log(questions[i].question);
-    console.log(questions[i].answers);
-    console.log(questions[i].correctAnswer);
+        console.log(questions[i].question);
+        console.log(questions[i].answers);
+        console.log(questions[i].correctAnswer);
 
+    };
 };
 
 //function checks users choice with the correct answer.
 
 function checkAnswer(userC, correctAnswer) {
 
-    // if (i === questions.length - 1) {
-    // 	setTimeout(gameEnd, 5000);
-    // 	clearInterval(intervalIndentity);
-    // }
 
-    if (userC !== correctAnswer) {
-        alert("ding dong! the correct answer is: " + questions[i].correctAnswer);
-        i++;
+    if (i < questions.length && userC !== correctAnswer) {
+
+        $("#answers").html("ding dong! the correct answer is: " + questions[i].correctAnswer);
+
+        if (i < questions.length - 1) {
+            setTimeout(i++, 2000);
+            qAs();
+        }
+        else {
+        	i = 0;
+        	gameEnd();
+        }
+
+
+
         incorrectAnswers++;
         console.log("incorrect answers: " + incorrectAnswers);
         clearInterval(intervalIndentity);
         counter = 3;
-    } 
+    } else if (i < questions.length && userC === correctAnswer) {
+        $("#answers").html("Lil smartie pants over here!");
+        
+        if (i < questions.length - 1) {
+            setTimeout(i++, 2000);
+            qAs();
+        }
+        else {
+        	i = 0;
+        	gameEnd();
+        }
 
-    else if (userC === correctAnswer) {
-        alert("nailed it");
-        i++;
         correctAnswers++;
         console.log("correct answers: " + correctAnswers);
         clearInterval(intervalIndentity);
@@ -163,8 +183,7 @@ function checkAnswer(userC, correctAnswer) {
     }
 
 
-
-    qAs();
+    
 };
 
 //function automatically moves user to next question if they run out of time. if its the last question move to end game screen,
@@ -172,47 +191,52 @@ function checkAnswer(userC, correctAnswer) {
 
 function moveToNextQuestion() {
 
-        if (i === questions.length - 1) {
-            setTimeout(gameEnd, 2000);
-            clearInterval(intervalIndentity);
-            $("#youReady").empty();
-           
-        } else {
-            i++;
-            setTimeout(startGame, 2000);
-            clearInterval(intervalIndentity);
-            counter = 3;
+    if (i === questions.length - 1) {
+        setTimeout(gameEnd, 2000);
+        clearInterval(intervalIndentity);
+        $("#youReady").empty();
 
-        }
-    };
+    } else {
+        i++;
+        setTimeout(startGame, 2000);
+        clearInterval(intervalIndentity);
+        counter = 3;
+
+    }
+};
 
 //function for end of game. will display your score, answers to questions and reset button
 
-    function gameEnd () {
-    	$("#youReady").empty();
-    	$("#question").empty();
-    	$("#answers").empty();
-    	$("#timer").empty();
-    	$("#finalScore").html("Here's how you did!" + "Correct answers: " + correctAnswers + "Incorrect answers: " + incorrectAnswers + "Unanswered questions: " + unansweredQuestions);
+function gameEnd() {
+    $("#youReady").empty();
+    $("#question").empty();
+    $("#answers").empty();
+    $("#timer").empty();
+    $("#finalScore").html("Here's how you did!" + "Correct answers: " + correctAnswers + "Incorrect answers: " + incorrectAnswers + "Unanswered questions: " + unansweredQuestions);
 
-    		restartGame();
+    restartGame();
 };
 
 //this function restarts quiz, sets all scores to zero
 
 function restartGame() {
-		restartButton = $("<button>");
-		restartButton.addClass("restart");
-		restartButton.text("Restart Game");
-		$("#finalScore").append(restartButton);
-	
-	$("body").on('click', '.restartGame', function() {
+    restartButton = $("<button>");
+    restartButton.addClass("restart");
+    restartButton.text("Restart Game");
+    $("#finalScore").append(restartButton);
+
+    $("body").on('click', '.restartGame', function() {
 
 
-	i = 0;
-	unansweredQuestions = 0;
-	correctAnswers = 0;
-	incorrectAnswers = 0;
-		startGame();
-	})
+        i = 0;
+        unansweredQuestions = 0;
+        correctAnswers = 0;
+        incorrectAnswers = 0;
+        startGame();
+    })
 };
+
+
+//I need to figure out how to check if there are any more questions in the checkAnswer function
+//I need to get the restart game button to work
+//I need to show "correct/incorrect" alert on the html, instead of the alert function

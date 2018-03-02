@@ -53,7 +53,7 @@ var timeoutId;
 var correctAnswers = 0;
 var incorrectAnswers = 0;
 var unansweredQuestions = 0;
-var counter = 3;
+var counter = 15;
 var resetButton;
 // creates on click events for all the answer buttons. Button user chooses is stored to userChoice, the correct answer is stored to correct. 
 //checkAnswer function is called and compares the user choice with the correct answer
@@ -163,7 +163,7 @@ function checkAnswer(userC, correctAnswer) {
         incorrectAnswers++;
         console.log("incorrect answers: " + incorrectAnswers);
         clearInterval(intervalIndentity);
-        counter = 3;
+        counter = 15;
     } else if (i < questions.length && userC === correctAnswer) {
         $("#answers").html("Lil smartie pants over here!");
         
@@ -179,7 +179,7 @@ function checkAnswer(userC, correctAnswer) {
         correctAnswers++;
         console.log("correct answers: " + correctAnswers);
         clearInterval(intervalIndentity);
-        counter = 3;
+        counter = 15;
     }
 
 
@@ -200,7 +200,7 @@ function moveToNextQuestion() {
         i++;
         setTimeout(startGame, 2000);
         clearInterval(intervalIndentity);
-        counter = 3;
+        counter = 15;
 
     }
 };
